@@ -88,13 +88,13 @@ function postTweetAll($time, $time_str, $place, $group, $client){
         $tweetString =
         "【防衛戦発生予告】[" . $time_str . "]\n約" . $tweet_time. "「" . $place . "」にて発生します。\n対象グループ : " . $tweetGroup . " #グラブル #ディフェンドオーダー";
         echo "<pre>" . $tweetString . "</pre>";
-        // $client->post('statuses/update', ['status' =>$tweetString]);
+        $client->post('statuses/update', ['status' =>$tweetString]);
         echo "Allアカウント : ツイート<br>";
         
         
         //各グループアカウントでツイート
         foreach ($groupArr as $value) {
-            // postTweetGroup($value ,$tweetString);
+           postTweetGroup($value ,$tweetString);
             echo $value . "アカウント : ツイート<br>";
         }
     }
