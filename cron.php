@@ -29,9 +29,9 @@ function checkString($string)
     // 日付を割り出す
     $pattern0 = "/【グランブルーファンタジー】【DEFEND ORDER】\n.*([0-9]{1,2}\/[0-9]{1,2}).* ([0-9]{1,2}:[0-9]{1,2})より、.*「(.*)」.*\n参加対象はグループ(.*)です。/um";
     preg_match_all($pattern0, $string, $query_date, PREG_SET_ORDER);
-
+    
     var_dump($query_date);
-
+    
     foreach ($query_date as $key => $value) {
         $replaceQuery[$key]["string"] = $value[0];
         $replaceQuery[$key]["time"] =     strtotime(date("Y",strtotime("-1 day")) . "/" . $value[1] . " " . $value[2]);
@@ -56,25 +56,23 @@ function getGbfNotice($client){
         "text" => $value -> text
         );
     }
-
+    
     return $tweets_gbf_notice;
 }
 
 
 function postTweetAll($time, $time_str, $place, $group, $client){
     // **ALL用のアカウントにツイートさせる処理**
-    
-    echo time() . " - " . $time . "<br>";
     $difference = $time - time();
     echo $difference . "<br>";
     
     $tweetFlag = false;
     
-    if ($difference < 1800){
-                $tweet_time =  preg_replace('/^0/','',date("i分後",$difference)); //なぜ時刻の書式に0埋めなし分が無いのか
-        $tweetFlag = true;}
-        else{        
-        echo "このメッセージはでないはずだよ でたら おしえてね";
+    if ($difference >= 0  && $difference < 1800){
+        $tweet_time =  preg_replace('/^0/','',date("i分後",$difference)); //なぜ時刻の書式に0埋めなし分が無いのか
+        $tweetFlag = true;
+    }else{
+        echo "きっと時間外だね ツイートはしないよ";
     }
     if($tweetFlag){
         // グループを記号で区切る
@@ -86,7 +84,7 @@ function postTweetAll($time, $time_str, $place, $group, $client){
         $tweetGroup = substr($tweetGroup, 0, -1);
         
         $tweetString =
-        "【防衛戦発生予告】[" . $time_str . "]\n約" . $tweet_time. "「" . $place . "」にて発生します。\n対象グループ : " . $tweetGroup . " #グラブル #ディフェンドオーダー";
+        "【防衛戦発生予告】[". $time_str ."]\n約" . $tweet_time. "「" . $place . "」にて発生します。\n対象グループ : " . $tweetGroup . " #グラブル #ディフェンドオーダー";
         echo "<pre>" . $tweetString . "</pre>";
         $client->post('statuses/update', ['status' =>$tweetString]);
         echo "Allアカウント : ツイート<br>";
@@ -94,7 +92,7 @@ function postTweetAll($time, $time_str, $place, $group, $client){
         
         //各グループアカウントでツイート
         foreach ($groupArr as $value) {
-           postTweetGroup($value ,$tweetString);
+            postTweetGroup($value ,$tweetString);
             echo $value . "アカウント : ツイート<br>";
         }
     }
@@ -117,19 +115,19 @@ foreach ($tweets_gbf_notice as $key => $value) {
 
 // データベースに入れる処理
 foreach ($gbf_notice_group as $key => $value_n) {
-
+    
     foreach ($value_n as $key => $value) {
         $sql = "INSERT IGNORE  INTO `djeetadefendorder` (`time`, `time_str`, `group`, `place`) values (?,?,?,?)";
         $stmt=$pdo->prepare($sql);
         $res=$stmt->execute(array($value["time"], $value["time_str"], $value["group"] ,$value["place"]));
         echo "<pre>" . "time : " . $value["time"] .
         "<br>time_str : " . $value["time_str"] .
-        "<br>group : " . $value["group"] .  
-        "<br>place : " . $value['place'] . 
+        "<br>group : " . $value["group"] .
+        "<br>place : " . $value['place'] .
         "</pre>";
         sleep(0.5);
     }
-
+    
 }
 
 echo "<hr>";
