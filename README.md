@@ -12,3 +12,6 @@ https://github.com/mpyw/cowitter
 
 ## 使い方
 任意のサーバーに設置してcron.phpをいい感じにcronで叩いてください。
+
+### [ jQuery Animated Table Sorter 0.2.2](http://www.matanhershberg.com/plugins/jquery-animated-table-sorter/)
+02/25/2013
