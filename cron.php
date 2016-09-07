@@ -63,12 +63,12 @@ function getGbfNotice($client){
 
 function postTweetAll($time, $time_str, $place, $group, $client){
     // **ALL用のアカウントにツイートさせる処理**
-    $difference = $time - time();
+    $difference = $time - time() + 30;  //ラグ考慮して+30s
     echo $difference . "<br>";
     
     $tweetFlag = false;
     
-    if ($difference >= 0  && $difference < 1800){
+    if ($difference >= 0  && $difference < 3000){
         $tweet_time =  preg_replace('/^0/','',date("i分後",$difference)); //なぜ時刻の書式に0埋めなし分が無いのか
         $tweetFlag = true;
     }else{
